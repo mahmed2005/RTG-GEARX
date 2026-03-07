@@ -515,7 +515,7 @@
                         const seller = (c[1]||'').replace(/"/g,'');
                         const accName = (c[2]||'').replace(/"/g,'');
                         const price = (c[11]||'').replace(/"/g,'');
-                        const videoLink = (c[14]||'').replace(/"/g,'').includes('drive.google.com') ? `https://drive.google.com/file/d/${c[14].match(/(?:id=|d\/)([^/&?]+)/)[1]}/preview` : c[14];
+                        const videoLink = (c[14]||'').replace(/"/g,'').includes('drive.google.com') ? `https://docs.google.com/spreadsheets/d/e/2PACX-1vRTnbs_2dSl9_WitKFo1iICCUulxCC7ZZ_UNarBraUG2SFRW1-IToXZr8lQT0tfH1skG1GX3WZKpRRH/pub?output=csv{c[14].match(/(?:id=|d\/)([^/&?]+)/)[1]}/preview` : c[14];
                         html += `<div class="card pubg-card">
                             <div class="pubg-user-header"><span class="seller-name">${seller}</span><span class="verified-badge">موثق</span></div>
                             <div class="pubg-main-video-container"><iframe src="${videoLink}"></iframe></div>
