@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -94,8 +95,9 @@
         .seller-name { font-weight: bold; color: var(--gold); }
         .verified-badge { background: var(--gold); color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 900; }
 
-        .pubg-main-video-container { width: 100%; height: 350px; background: #000; overflow: hidden; position: relative; border-bottom: 2px solid var(--gold); }
-        .pubg-main-video-container iframe { width: 100%; height: 100%; border: none; }
+        .pubg-main-video-container { width: 100%; height: 350px; background: #000; overflow: hidden; position: relative; border-bottom: 2px solid var(--gold); display:flex; align-items:center; justify-content:center; }
+        .pubg-main-video-container iframe { width: 100%; height: 100%; border: none; display:block; }
+        .pubg-main-video-container .no-video { color:#999; padding:20px; text-align:center; }
 
         .pubg-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 15px; background: rgba(0,0,0,0.2); font-size: 0.9rem; color:#ddd; }
         .pubg-details b { color: var(--gold); margin-left: 4px; }
@@ -127,7 +129,6 @@
     </style>
 </head>
 <body>
-
     <header>
         <div class="logo">RTG-GEARX</div>
         <div style="display:flex; gap:12px; align-items:center;">
@@ -193,7 +194,7 @@
             </button>
         </div>
         <div id="pubg-container"></div>
-		 <p style="text-align: center; padding: 50px; color: #666;">جاري تحميل الحسابات المعتمدة...</p>
+        <p id="loading-text" style="text-align: center; padding: 50px; color: #666;">جاري تحميل الحسابات المعتمدة...</p>
     </div>
 
     <div id="social-page" class="page" style="display:none;">
@@ -339,7 +340,7 @@
             { id: 'uc3', name: '660 UC', price: 22, img: "660-uc.png" },
             { id: 'uc4', name: '1800 UC', price: 40, img: "1800-uc.png" },
             { id: 'uc5', name: '3850 UC', price: 95, img: "3850-uc.png" },
-			{ id: 'uc6', name: '8100 UC', price: 95, img: "8100-uc.png" },
+            { id: 'uc6', name: '8100 UC', price: 95, img: "8100-uc.png" },
         ];
 
         function playTechSound() {
@@ -501,6 +502,33 @@
             window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`);
         }
 
+        // Helper: build a safe embed URL for different video link types
+        function getEmbedUrl(raw) {
+            if(!raw) return '';
+            raw = raw.replace(/"/g,'').trim();
+
+            // Google Drive file id
+            let m = raw.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+            if(m && m[1]) {
+                return `https://drive.google.com/file/d/${m[1]}/preview`;
+            }
+
+            // YouTube id (watch?v= or youtu.be or embed)
+            m = raw.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+            if(m && m[1]) {
+                return `https://www.youtube.com/embed/${m[1]}`;
+            }
+
+            // If already an embed link (youtube embed or drive preview)
+            if(raw.includes('youtube.com/embed') || raw.includes('drive.google.com/file')) return raw;
+
+            // Direct video file (mp4/webm)
+            if(raw.match(/\.(mp4|webm|ogg)(\?|$)/)) return raw;
+
+            // Not recognized
+            return '';
+        }
+
         async function loadPubgData() {
             const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv`;
             try {
@@ -510,37 +538,51 @@
                 let html = '';
                 rows.forEach(row => {
                     if (!row.trim()) return;
+                    // split CSV respecting quoted commas
                     const c = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    // column 16 (index 16) was used in original code to check "نعم"
                     if (c[16] && c[16].replace(/"/g,'').trim() === "نعم") {
-                        const seller = (c[1]||'').replace(/"/g,'');
-                        const accName = (c[2]||'').replace(/"/g,'');
-                        const price = (c[11]||'').replace(/"/g,'');
-                        const videoLink = // هذا السطر يقوم باستخراج معرف الفيديو وتحويله لرابط قابل للتضمين تلقائياً
-let rawLink = (c[14] || '').replace(/"/g, '').trim();
-let videoLink = rawLink;
+                        const seller = (c[1]||'').replace(/"/g,'').trim();
+                        const accName = (c[2]||'').replace(/"/g,'').trim();
+                        const price = (c[11]||'').replace(/"/g,'').trim();
+                        const rawVideo = (c[14]||'').replace(/"/g,'').trim();
 
-if (rawLink.includes('drive.google.com')) {
-    const fileId = rawLink.match(/(?:id=|d\/)([^/&?]+)/);
-    if (fileId && fileId[1]) {
-        videoLink = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSD8pef7XgtDcmbhvoQncJmcbpjbU0uKHE40ZHPm0AKKrjtEFY5Lhq8Mg4H_pYp-prwMi1s6e4xttXI/pub?output=csv`;
-    }
-}
+                        const embedUrl = getEmbedUrl(rawVideo);
+
+                        // Build card HTML. Use JSON.stringify to safely inject strings into onclick
+                        const accJson = JSON.stringify(accName);
+                        const priceJson = JSON.stringify(price);
+                        const sellerJson = JSON.stringify(seller);
+
                         html += `<div class="card pubg-card">
                             <div class="pubg-user-header"><span class="seller-name">${seller}</span><span class="verified-badge">موثق</span></div>
-                            <div class="pubg-main-video-container"><iframe src="${videoLink}"></iframe></div>
+                            <div class="pubg-main-video-container">`;
+                        if (embedUrl) {
+                            // Use iframe with allow attributes and allowfullscreen
+                            html += `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                        } else {
+                            // Fallback when no embeddable video is available
+                            html += `<div class="no-video">لا يوجد فيديو قابل للعرض أو الرابط غير مدعوم للعرض المباشر.</div>`;
+                        }
+                        html += `</div>
                             <div class="pubg-details">
                                 <div><b>المستوى:</b> ${(c[3]||'').replace(/"/g,'')}</div>
                                 <div><b>الميثيك:</b> ${(c[4]||'').replace(/"/g,'')}</div>
                                 <div><b>السعر:</b> ${price} د.ل</div>
                                 <div style="grid-column: span 2; text-align:center;"><b>الحساب:</b> ${accName}</div>
                             </div>
-                            <button class="btn-add" style="background:var(--gold); color:#000;" onclick="startPubgBuy('${accName}','${price}','${seller}')">طلب شراء عبر الوسيط</button>
+                            <button class="btn-add" style="background:var(--gold); color:#000;" onclick='startPubgBuy(${accJson}, ${priceJson}, ${sellerJson})'>طلب شراء عبر الوسيط</button>
                         </div>`;
                     }
                 });
                 document.getElementById('pubg-container').innerHTML = html || '<p class="center">لا توجد حسابات معروضة حالياً.</p>';
-                document.getElementById('loading-text').style.display = 'none';
-            } catch (e) { document.getElementById('loading-text').innerText = "خطأ في تحميل البيانات."; }
+                const loadingEl = document.getElementById('loading-text');
+                if (loadingEl) loadingEl.style.display = 'none';
+            } catch (e) {
+                const loadingEl = document.getElementById('loading-text');
+                if (loadingEl) loadingEl.innerText = "خطأ في تحميل البيانات.";
+                console.error('loadPubgData error', e);
+            }
         }
 
         function renderProducts() {
@@ -592,3 +634,4 @@ if (rawLink.includes('drive.google.com')) {
     </script>
 </body>
 </html>
+```
