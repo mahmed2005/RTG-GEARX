@@ -582,8 +582,16 @@
                             <div class="pubg-details">
                                 <div><b>المستوى:</b> ${(c[3]||'').replace(/"/g,'')}</div>
                                 <div><b>الميثيك:</b> ${(c[4]||'').replace(/"/g,'')}</div>
+								<div><b>لفل الكمتك:</b> ${(c[5]||'').replace(/"/g,'')}</div>
+								<div><b>عدد المتك الدهبي:</b> ${(c[6]||'').replace(/"/g,'')}</div>
+								<div><b>عدد الأسلحة الي تطور :</b> ${(c[7]||'').replace(/"/g,'')}</div>
+								<div><b> عدد السيارات :</b> ${(c[8]||'').replace(/"/g,'')}</div> 
+								<div><b> عدد الهاشتقات :</b> ${(c[9]||'').replace(/"/g,'')}</div> 
+								<div><b> الربط :</b> ${(c[10]||'').replace(/"/g,'')}</div> 
+
+
                                 <div><b>السعر:</b> ${price} د.ل</div>
-                                <div style="grid-column: span 2; text-align:center;"><b>الحساب:</b> ${accName}</div>
+                                <div style="grid-column: span 2; text-align:center;"><b> اسم الحساب:</b> ${accName}</div>
                             </div>
                             <button class="btn-add" style="background:var(--gold); color:#000;" onclick='startPubgBuy(${accJson}, ${priceJson}, ${sellerJson})'>طلب شراء عبر الوسيط</button>
                         </div>`;
