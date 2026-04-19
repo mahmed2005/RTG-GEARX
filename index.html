@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root { --red: #e83137; --bg: #0f0f12; --card: #1a1a1f; --text: #f0f0f0; --gold: #f3cf00; --muted:#888; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -330,13 +333,13 @@
             { id: 27, name: "(ازرار الالعاب)", price: 50, img: "Gemini_Generated_Image_6ke3mr6ke3mr6ke3.png", featured: false, weight: "20g", points: ["تخصيص اربعه ازرار", "متوافقه معا جميع الاجهزة", "خفيفة الوزن", "تصميم مريح لليد"] },
             { id: 28, name: "سماعات (BOROFONE (BO-112)", price: 135, img: "Gemini_Generated_Image_8gto7p8gto7p8gto.png", featured: false, weight: "15g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
             { id: 29, name: "سماعات (airpods 2 pro)", price: 80, img: "Gemini_Generated_Image_cgcpk6cgcpk6cgcp.png", featured: false, weight: "45g", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
-			{ id: 30, name: "مبرد (BAVIN-007)", price: 125, img: "tytty.png", featured: false, weight: "45g", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
-			{ id: 31, name: "مبرد (BAVIN-008)", price: 140, img: "jgetwsye.png", featured: false, weight: "45g", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
-			{ id: 32, name: "سماعات (ACEFAST-W1))", price: 215, img: "HFHT.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
-			{ id: 33, name: "قفازات (MEMO)", price: 25, img: "HRTHTJ.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
-			{ id: 34, name: "مبرد (MEMO DLA8)", price: 75, img: "JFJF.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
-			{ id: 35, name: "مدخل شحن(20W)", price: 55, img: "DRFHY.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
-			{ id: 36, name: "مدخل شحن(30W)", price: 75, img: "JFDDJHT.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+            { id: 30, name: "مبرد (BAVIN-007)", price: 125, img: "tytty.png", featured: false, weight: "45g", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+            { id: 31, name: "مبرد (BAVIN-008)", price: 140, img: "jgetwsye.png", featured: false, weight: "45g", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+            { id: 32, name: "سماعات (ACEFAST-W1))", price: 215, img: "HFHT.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+            { id: 33, name: "قفازات (MEMO)", price: 25, img: "HRTHTJ.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+            { id: 34, name: "مبرد (MEMO DLA8)", price: 75, img: "JFJF.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+            { id: 35, name: "مدخل شحن(20W)", price: 55, img: "DRFHY.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+            { id: 36, name: "مدخل شحن(30W)", price: 75, img: "JFDDJHT.png", featured: false, weight: "235g", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
             { id: 37, name: "مايك (Plokama-VM10)", price: 125, img: "JFG.png", featured: false, weight: "120g", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
             { id: 38, name: "مايك (K8)", price: 75, img: "FUTIU.png", featured: false, weight: "120g", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
             { id: 39, name: "باور بانك(10.000)", price: 100, img: "RTY.png", featured: false, weight: "120g", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
@@ -421,7 +424,7 @@
         function removeFromCart(index) { cart.splice(index,1); updateCart(); }
         function removeUcFromCart(index) { ucCart.splice(index,1); updateCart(); }
         function toggleCart() { document.getElementById('cart-panel').classList.toggle('active'); }
-		function stopAllVideos() {
+        function stopAllVideos() {
   document.querySelectorAll('iframe, video').forEach(el => {
     try {
       if (el.tagName.toLowerCase() === 'iframe') {
@@ -498,7 +501,7 @@
                       `الهاتف: ${ph1}%0A` +
                       (ph2 ? `احتياطي: ${ph2}%0A` : '') +
                       `طريقة الدفع: ${pay}%0A%0A` +
-                      `✅ يرجى إرسال الشدات.`;
+`✅ يرجى إرسال الشدات.`;
             window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`);
         }
 
@@ -593,12 +596,12 @@
                             <div class="pubg-details">
                                 <div><b>المستوى:</b> ${(c[3]||'').replace(/"/g,'')}</div>
                                 <div><b>الميثيك:</b> ${(c[4]||'').replace(/"/g,'')}</div>
-								<div><b>لفل الكمتك:</b> ${(c[5]||'').replace(/"/g,'')}</div>
-								<div><b>عدد المتك الدهبي:</b> ${(c[6]||'').replace(/"/g,'')}</div>
-								<div><b> الأسلحة الي تطور :</b> ${(c[7]||'').replace(/"/g,'')}</div>
-								<div><b> عدد السيارات :</b> ${(c[8]||'').replace(/"/g,'')}</div> 
-								<div><b> عدد الهاشتقات :</b> ${(c[9]||'').replace(/"/g,'')}</div> 
-								<div><b> الربط :</b> ${(c[10]||'').replace(/"/g,'')}</div> 
+                                <div><b>لفل الكمتك:</b> ${(c[5]||'').replace(/"/g,'')}</div>
+                                <div><b>عدد المتك الدهبي:</b> ${(c[6]||'').replace(/"/g,'')}</div>
+                                <div><b> الأسلحة الي تطور :</b> ${(c[7]||'').replace(/"/g,'')}</div>
+                                <div><b> عدد السيارات :</b> ${(c[8]||'').replace(/"/g,'')}</div> 
+                                <div><b> عدد الهاشتقات :</b> ${(c[9]||'').replace(/"/g,'')}</div> 
+                                <div><b> الربط :</b> ${(c[10]||'').replace(/"/g,'')}</div> 
 
 
                                 <div><b>السعر:</b> ${price} د.ل</div>
@@ -665,6 +668,14 @@
             });
         };
     </script>
+
+    <!-- Register Service Worker for PWA -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker registered!'))
+        .catch(err => console.warn('SW registration failed:', err));
+    }
+    </script>
 </body>
 </html>
-```
