@@ -6,9 +6,13 @@
     <meta name="theme-color" content="#e8323a">
     <meta name="description" content="RTG-GEARX | متجرك الرسمي لإكسسوارات الموبايل والقيمنق: مبردات هاتف، سماعات، شدات ببجي، وسوق حسابات ببجي موثوق.">
     <title>RTG-GEARX | المتجر الرسمي</title>
+    <link rel="preload" as="image" href="logo.png">
+    <link rel="preconnect" href="https://docs.google.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,5 90,27 90,73 50,95 10,73 10,27' fill='%230f0f12' stroke='%23e8323a' stroke-width='4'/%3E%3C/svg%3E">
+    <link rel="icon" href="logo.png">
     <link rel="manifest" href="manifest.json">
 
     <style>
@@ -43,10 +47,8 @@
             transition: opacity .6s ease, visibility .6s ease;
         }
         #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-        .splash-hex { width: 130px; height: 150px; animation: hexIn 1s cubic-bezier(.2,.9,.25,1.1) both; }
+        .splash-logo { width: 150px; height: auto; animation: hexIn 1s cubic-bezier(.2,.9,.25,1.1) both; filter: drop-shadow(0 10px 30px rgba(232,50,58,.25)); }
         @keyframes hexIn { 0% { opacity:0; transform: scale(.4) rotate(-25deg); } 100% { opacity:1; transform: scale(1) rotate(0); } }
-        .splash-title { font-family:'Orbitron', sans-serif; font-weight:900; font-size: 2rem; letter-spacing: 3px; opacity:0; animation: fadeUp .7s ease .5s forwards;
-            background: linear-gradient(90deg, var(--silver), #fff, var(--silver)); -webkit-background-clip: text; background-clip:text; color: transparent; }
         .splash-sub { color: var(--muted); font-size: .95rem; opacity:0; animation: fadeUp .7s ease .7s forwards; letter-spacing: 1px; }
         @keyframes fadeUp { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: translateY(0); } }
         .splash-enter {
@@ -60,11 +62,9 @@
 
         /* ===== الهيدر + شريط التصنيفات (موحدين داخل غلاف ثابت واحد لمنع التراكب) ===== */
         #top-shell { position: sticky; top: 0; z-index: 1000; }
-        header { background: rgba(10,10,13,0.97); backdrop-filter: blur(10px); padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+        header { background: rgba(10,10,13,0.97); backdrop-filter: blur(10px); padding: 10px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
         .logo-wrap { display:flex; align-items:center; gap:10px; }
-        .logo-hex { width:30px; height:34px; flex-shrink:0; }
-        .logo { font-family: 'Orbitron', sans-serif; color: var(--text); font-size: 1.15rem; font-weight: 900; letter-spacing:1px; }
-        .logo span { color: var(--red); }
+        .logo-img { height: 42px; width: auto; display:block; }
         .cart-icon-container { position: relative; cursor: pointer; transition: transform 0.25s ease; display:flex; align-items:center; gap:8px; background: var(--card); padding: 9px 14px; border-radius: 50px; border: 1px solid var(--line); }
         .cart-icon-container:hover { transform: translateY(-3px); border-color: var(--red); }
         #cart-icon { font-size: 1.25rem; color:var(--text); }
@@ -85,11 +85,11 @@
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 16px; }
         @media (min-width:700px) { .grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width:1000px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-        .card { background: linear-gradient(180deg, var(--card-hi), var(--card)); border-radius: var(--radius); padding: 12px; text-align: center; border: 1px solid var(--line); position: relative; transition: transform 0.28s cubic-bezier(.2,.9,.2,1), box-shadow 0.28s, border-color .28s; overflow: hidden; }
-        .card::before { content:''; position:absolute; inset:0; border-radius: var(--radius); padding:1px; background: linear-gradient(135deg, transparent, transparent); pointer-events:none; }
+        .card { background: linear-gradient(180deg, var(--card-hi), var(--card)); border-radius: var(--radius); padding: 12px; text-align: center; border: 1px solid var(--line); position: relative; transition: transform 0.28s cubic-bezier(.2,.9,.2,1), box-shadow 0.28s, border-color .28s; overflow: hidden; content-visibility: auto; contain-intrinsic-size: 320px; }
         .card:hover { box-shadow: 0 14px 32px rgba(0,0,0,0.5); transform: translateY(-6px); border-color: rgba(232,50,58,.4); }
         .img-box { width: 100%; height: 140px; background: radial-gradient(circle at 50% 30%, #1c1c22, #000); border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border:1px solid var(--line); cursor: pointer; }
-        .img-box img { max-width: 88%; max-height: 88%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)); transition: transform .3s ease; }
+        .img-box img { max-width: 88%; max-height: 88%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6)); transition: transform .3s ease, opacity .25s ease; opacity: 0; }
+        .img-box img.loaded { opacity: 1; }
         .card:hover .img-box img { transform: scale(1.06); }
 
         .title-small { min-height:40px; font-size:0.92rem; display:flex; align-items:center; justify-content:center; color:var(--text); padding:0 4px; text-align:center; font-weight:600; }
@@ -130,13 +130,12 @@
         .seller-name { font-weight: 800; color: var(--silver); }
         .verified-badge { background: var(--red); color: #fff; padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; }
 
-        .pubg-main-video-container { width: 100%; max-height: 520px; aspect-ratio: 9 / 13; background: #000; overflow: hidden; position: relative; border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:center; margin: 0 auto; }
+        .pubg-main-video-container { width: 100%; max-height: 520px; aspect-ratio: 9 / 16; background: #000; overflow: hidden; position: relative; border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:center; margin: 0 auto; }
         @media (min-width: 700px) { .pubg-main-video-container { aspect-ratio: 16 / 9; } }
-        .pubg-main-video-container iframe { width: 100%; height: 100%; border: none; display:block; }
+        .pubg-main-video-container iframe,
+        .pubg-main-video-container video { width: 100%; height: 100%; border: none; display:block; background:#000; object-fit: contain; }
         .pubg-main-video-container .no-video { color:var(--muted); padding:20px; text-align:center; font-size:.9rem; }
-
-        .pubg-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 15px; background: rgba(0,0,0,0.2); font-size: 0.9rem; color:#ddd; }
-        .pubg-details b { color: var(--silver); margin-left: 4px; }
+        .video-skeleton { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background: radial-gradient(circle at 50% 40%, #1c1c22, #000); color: var(--muted); font-size: 1.4rem; }
 
         /* ===== نافذة منبثقة (Modal) ===== */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -162,7 +161,7 @@
 
         /* ===== الفوتر ===== */
         .footer { background: var(--bg-soft); padding: 34px 20px; text-align: center; border-top: 1px solid var(--line); margin-top: 40px; }
-        .footer-logo { font-family:'Orbitron'; font-weight:900; letter-spacing:2px; font-size:1.1rem; }
+        .footer-logo-img { height: 46px; width: auto; }
         .footer-socials { display: flex; justify-content: center; gap: 16px; margin: 22px 0; }
         .footer-socials a { width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:50%; background: var(--card); border:1px solid var(--line); color: var(--text); font-size: 1.2rem; transition: transform 0.2s, border-color .2s; }
         .footer-socials a:hover { transform: translateY(-5px); border-color: var(--red); color: var(--red); }
@@ -179,21 +178,15 @@
         .muted { color: var(--muted); }
         .section-title { text-align: center; margin: 26px 0 4px; font-family:'Orbitron'; font-size:1.3rem; letter-spacing:1px; }
         .section-sub { text-align:center; color:var(--muted); margin-bottom: 10px; font-size:.9rem; }
-        .hero { padding: 46px 20px 30px; text-align: center; }
-        .hero h1 { font-family:'Orbitron'; color: var(--text); letter-spacing:2px; font-size: 1.9rem; }
-        .hero h1 span { color: var(--red); }
+        .hero { padding: 30px 20px 20px; text-align: center; }
+        .hero img.hero-logo { height: 90px; width:auto; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <!-- ===== شاشة الترحيب ===== -->
     <div id="splash">
-        <svg class="splash-hex" viewBox="0 0 100 115" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="50,3 95,28 95,87 50,112 5,87 5,28" fill="#101013" stroke="#c9ccd3" stroke-width="3"/>
-            <path d="M50 22 L68 40 L50 60 L38 48 Z" fill="#e8323a"/>
-            <path d="M38 60 L50 72 L38 88 L28 78 Z" fill="#c9ccd3"/>
-        </svg>
-        <div class="splash-title">RTG-GEARX</div>
+        <img class="splash-logo" src="logo.png" alt="RTG-GEARX" width="150" height="200" fetchpriority="high">
         <div class="splash-sub">MOBILE &amp; GAMING ACCESSORIES</div>
         <button class="splash-enter" onclick="enterSite()"><i class="fas fa-arrow-left"></i>اضغط هنا للدخول</button>
     </div>
@@ -201,12 +194,7 @@
     <div id="top-shell">
         <header>
             <div class="logo-wrap">
-                <svg class="logo-hex" viewBox="0 0 100 115" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="50,3 95,28 95,87 50,112 5,87 5,28" fill="#101013" stroke="#c9ccd3" stroke-width="4"/>
-                    <path d="M50 22 L68 40 L50 60 L38 48 Z" fill="#e8323a"/>
-                    <path d="M38 60 L50 72 L38 88 L28 78 Z" fill="#c9ccd3"/>
-                </svg>
-                <div class="logo">RTG-<span>GEARX</span></div>
+                <img class="logo-img" src="logo.png" alt="RTG-GEARX" width="120" height="42" fetchpriority="high">
             </div>
             <div style="display:flex; gap:12px; align-items:center;">
                 <div class="cart-icon-container" id="main-cart-btn" onclick="toggleCart()" role="button" aria-label="سلة التسوق" tabindex="0">
@@ -240,7 +228,7 @@
 
     <div id="home-page" class="page">
         <div class="hero">
-           <h1>RTG-<span>GEARX</span></h1>
+            <img class="hero-logo" src="logo.png" alt="RTG-GEARX" width="90" height="120" fetchpriority="high">
             <p class="muted" style="margin-top:6px;">المنتجات الأكثر طلباً هذا الأسبوع</p>
         </div>
         <div class="grid" id="featured-grid"></div>
@@ -344,7 +332,7 @@
     </div>
 
     <footer class="footer">
-        <div class="footer-logo">RTG-<span style="color:var(--red);">GEARX</span></div>
+        <img class="footer-logo-img" src="logo.png" alt="RTG-GEARX" width="46" height="61">
         <p class="muted" style="margin-top:6px; font-size:.85rem;">LIBYA</p>
         <div class="footer-socials">
             <a href="https://wa.me/218934590635" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
@@ -380,6 +368,7 @@
         let cart = [];
         let ucCart = [];
         let tempPubg = {};
+        let currentPage = 'home';
 
         const products = [
             { id: 1, name: "مبرد (MEMO CX 07)", price: 90, img: "akjgejkg.png", featured: true, weight: "68g", points: ["تبريد مغناطيسي صامت", "مشتت حراري حلقي", "إضاءة RGB جذابة", "يدعم Magsafe"] },
@@ -506,6 +495,13 @@
             setTimeout(() => ripple.remove(), 500);
         });
 
+        /* تشغيل صورة المنتج فوراً بعد التحميل بدل الظهور الفجائي (لصورة أوضح وأسرع الإحساس) */
+        document.addEventListener('load', function(e) {
+            if (e.target && e.target.tagName === 'IMG' && e.target.closest('.img-box')) {
+                e.target.classList.add('loaded');
+            }
+        }, true);
+
         function addToCart(id) {
             if (ucCart.length > 0) return showToast("أكمل طلب الشدات أولاً أو أفرغ السلة لإضافة منتجات.", 'error');
             const product = products.find(x => x.id === id);
@@ -558,13 +554,15 @@
         function removeUcFromCart(index) { ucCart.splice(index,1); updateCart(); playClickSound(); }
         function toggleCart() { document.getElementById('cart-panel').classList.toggle('active'); playNavSound(); }
 
+        /* ===== إيقاف كل الفيديوهات النشطة (وحفظ مصدرها لاستعادتها لاحقاً) ===== */
         function stopAllVideos() {
-            document.querySelectorAll('iframe, video').forEach(el => {
+            document.querySelectorAll('#pubg-container iframe, #pubg-container video').forEach(el => {
                 try {
                     if (el.tagName.toLowerCase() === 'iframe') {
-                        if (!el.dataset.origSrc) el.dataset.origSrc = el.src || '';
-                        el.contentWindow && el.contentWindow.postMessage && el.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                        el.src = '';
+                        if (el.src) {
+                            el.dataset.origSrc = el.src;
+                            el.src = '';
+                        }
                     } else {
                         el.pause && el.pause();
                         try { el.currentTime = 0; } catch(e){}
@@ -573,17 +571,34 @@
             });
         }
 
-        /* إصلاح: التنقل بين الصفحات الآن يعيد التمرير لأعلى الصفحة في كل مرة */
+        /* ===== إعادة تحميل الفيديوهات عند العودة لصفحة الحسابات (بعد إيقافها سابقاً) ===== */
+        function restoreVideos() {
+            document.querySelectorAll('#pubg-container iframe').forEach(el => {
+                if (el.dataset.origSrc && !el.src) {
+                    el.src = el.dataset.origSrc;
+                }
+            });
+        }
+
+        /* إصلاح: التنقل بين الصفحات الآن يوقف أي فيديو مشغّل قبل مغادرة الصفحة، ويعيد تشغيله عند العودة */
         function showPage(p, btn) {
             playNavSound();
+            if (currentPage === 'pubg' && p !== 'pubg') stopAllVideos();
             document.querySelectorAll('.page').forEach(x => x.style.display = 'none');
             const page = document.getElementById(p + '-page');
             if (page) page.style.display = 'block';
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
             closeDetails();
+            if (p === 'pubg') restoreVideos();
+            currentPage = p;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        /* إيقاف الفيديو أيضاً عند مغادرة التبويب/تصغير التطبيق حتى لا يستمر الصوت بالخلفية */
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && currentPage === 'pubg') stopAllVideos();
+        });
 
         function openCorrectModal() {
             if(cart.length === 0 && ucCart.length === 0) return showToast("السلة فارغة!", 'error');
@@ -667,19 +682,21 @@
         }
 
         /* رابط فيديو آمن للأنواع المختلفة (يوتيوب / درايف / ملف مباشر) مع دعم أفضل لسفاري آيفون */
-        function getEmbedUrl(raw) {
-            if(!raw) return '';
+        function getEmbedInfo(raw) {
+            if(!raw) return { type: null, url: '' };
             raw = raw.replace(/"/g,'').trim();
 
+            // ملف فيديو مباشر (mp4/webm/ogg) — يُعرض بمشغل <video> أصلي خفيف وسريع وبدون واجهات جوجل الخارجية
+            if (raw.match(/\.(mp4|webm|ogg)(\?|$)/i)) return { type: 'video', url: raw };
+
             let m = raw.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
-            if(m && m[1]) return `https://drive.google.com/file/d/${m[1]}/preview`;
+            if(m && m[1]) return { type: 'iframe', url: `https://drive.google.com/file/d/${m[1]}/preview` };
 
             m = raw.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-            if(m && m[1]) return `https://www.youtube.com/embed/${m[1]}?playsinline=1`;
+            if(m && m[1]) return { type: 'iframe', url: `https://www.youtube.com/embed/${m[1]}?playsinline=1` };
 
-            if(raw.includes('youtube.com/embed') || raw.includes('drive.google.com/file')) return raw;
-            if(raw.match(/\.(mp4|webm|ogg)(\?|$)/)) return raw;
-            return '';
+            if(raw.includes('youtube.com/embed') || raw.includes('drive.google.com/file')) return { type: 'iframe', url: raw };
+            return { type: null, url: '' };
         }
 
         async function loadPubgData() {
@@ -697,7 +714,7 @@
                         const accName = escapeHtml((c[2]||'').replace(/"/g,'').trim());
                         const price = escapeHtml((c[11]||'').replace(/"/g,'').trim());
                         const rawVideo = (c[14]||'').replace(/"/g,'').trim();
-                        const embedUrl = getEmbedUrl(rawVideo);
+                        const embed = getEmbedInfo(rawVideo);
 
                         const accJson = JSON.stringify(accName);
                         const priceJson = JSON.stringify(price);
@@ -706,8 +723,10 @@
                         html += `<div class="card pubg-card">
                             <div class="pubg-user-header"><span class="seller-name">${seller}</span><span class="verified-badge">موثق</span></div>
                             <div class="pubg-main-video-container">`;
-                        if (embedUrl) {
-                            html += `<iframe src="${embedUrl}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen playsinline webkit-playsinline></iframe>`;
+                        if (embed.type === 'video') {
+                            html += `<video src="${embed.url}" controls preload="metadata" playsinline webkit-playsinline controlsList="nodownload noremoteplayback"></video>`;
+                        } else if (embed.type === 'iframe') {
+                            html += `<iframe src="${embed.url}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen playsinline webkit-playsinline></iframe>`;
                         } else {
                             html += `<div class="no-video">لا يوجد فيديو قابل للعرض أو الرابط غير مدعوم للعرض المباشر.</div>`;
                         }
@@ -739,20 +758,20 @@
         }
 
         function renderProducts() {
-            const draw = p => `<div class="card">
-                <div class="img-box" onclick="showProductDetails(${p.id})" role="button" tabindex="0"><img src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy"></div>
+            const draw = (p, priority) => `<div class="card">
+                <div class="img-box" onclick="showProductDetails(${p.id})" role="button" tabindex="0"><img src="${p.img}" alt="${escapeHtml(p.name)}" loading="${priority ? 'eager' : 'lazy'}" decoding="async" fetchpriority="${priority ? 'high' : 'low'}"></div>
                 <div class="title-small">${escapeHtml(p.name)}</div>
                 <div class="price">${p.price} د.ل</div>
                 <button class="btn-add" onclick="addToCart(${p.id})">إضافة للسلة</button>
                 <button class="btn-details" onclick="showProductDetails(${p.id})">تفاصيل</button>
             </div>`;
-            document.getElementById('featured-grid').innerHTML = products.filter(x=>x.featured).map(draw).join('');
-            document.getElementById('full-shop-grid').innerHTML = products.map(draw).join('');
+            document.getElementById('featured-grid').innerHTML = products.filter(x=>x.featured).map(p => draw(p, true)).join('');
+            document.getElementById('full-shop-grid').innerHTML = products.map((p,i) => draw(p, i < 4)).join('');
         }
 
         function renderUcPacks() {
             const drawUc = u => `<div class="card">
-                <div class="img-box"><img src="${u.img}" alt="${escapeHtml(u.name)}" loading="lazy"></div>
+                <div class="img-box"><img src="${u.img}" alt="${escapeHtml(u.name)}" loading="lazy" decoding="async"></div>
                 <div class="title-small">${escapeHtml(u.name)}</div>
                 <div class="price">${u.price} د.ل</div>
                 <button class="btn-add" onclick="addUcToCart('${u.id}')">إضافة باقة</button>
@@ -766,7 +785,7 @@
             if(!p) return;
             const featuresHtml = (p.points || ["جودة ممتازة"]).map(f => `<div class="spec-item"><i class="fas fa-star"></i> ${escapeHtml(f)}</div>`).join('');
             document.getElementById('detail-body').innerHTML = `
-                <div class="detail-img-container"><img src="${p.img}" alt="${escapeHtml(p.name)}"></div>
+                <div class="detail-img-container"><img src="${p.img}" alt="${escapeHtml(p.name)}" loading="eager" decoding="async" fetchpriority="high"></div>
                 <h2>${escapeHtml(p.name)}</h2>
                 <div class="price" style="font-size:1.8rem;">${p.price} د.ل</div>
                 <div class="spec-box">${featuresHtml}</div>
