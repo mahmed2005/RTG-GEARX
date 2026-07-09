@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم RTG-GEARX</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<style>
+    :root {
+        --red: #e8323a; --red-dim: #b8262c; --bg: #0a0a0d; --bg-soft: #111114;
+        --card: #17171c; --card-hi: #1e1e24; --text: #f2f2f4; --muted: #90909a;
+        --silver: #c9ccd3; --line: #2a2a30; --whatsapp: #25d366; --radius: 16px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo',sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height:100vh; }
+    header { background: rgba(10,10,13,0.97); border-bottom:1px solid var(--line); padding: 16px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+    .logo { font-family:'Orbitron'; font-weight:900; letter-spacing:1px; }
+    .logo span { color: var(--red); }
+    .logo small { display:block; font-size:.65rem; color:var(--muted); font-weight:400; letter-spacing:2px; margin-top:2px; }
+    .btn { border:none; padding: 10px 18px; border-radius: 10px; font-weight:800; cursor:pointer; font-size:.85rem; transition: transform .15s ease, box-shadow .15s ease; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg, var(--red), var(--red-dim)); color:#fff; box-shadow: 0 8px 20px rgba(232,50,58,.25); }
+    .btn-ghost { background: var(--card); color: var(--text); border:1px solid var(--line); }
+    .btn-danger { background: transparent; color: var(--red); border:1px solid var(--red); }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 24px 18px 70px; }
+
+    /* ---- شاشة الدخول ---- */
+    #login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .login-box { background: var(--card); border:1px solid var(--line); border-radius: var(--radius); padding: 34px 28px; width:100%; max-width: 380px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .login-box i.fa-lock { font-size:2rem; color: var(--red); margin-bottom:14px; }
+    .login-box h2 { font-family:'Orbitron'; margin-bottom: 6px; font-size:1.2rem; }
+    .login-box p { color: var(--muted); font-size:.85rem; margin-bottom: 22px; }
+    .login-box input { width:100%; padding:13px; margin-bottom:12px; background:#101013; border:1px solid var(--line); color:#fff; border-radius:10px; text-align:right; }
+    .login-box input:focus { outline:none; border-color:var(--red); }
+    #login-error { color: var(--red); font-size:.82rem; min-height: 18px; margin-bottom: 8px; }
+    .config-warning { background: rgba(232,50,58,.08); border:1px solid var(--red); color:#ffb3b6; padding:14px; border-radius:12px; font-size:.82rem; line-height:1.8; max-width:520px; margin: 20px auto; text-align:right; }
+
+    /* ---- التبويبات ---- */
+    .tabs { display:flex; gap:10px; margin-bottom: 22px; flex-wrap:wrap; }
+    .tab-btn { background: var(--card); border:1px solid var(--line); color: var(--muted); padding:10px 20px; border-radius:25px; font-weight:800; font-size:.85rem; cursor:pointer; }
+    .tab-btn.active { background: linear-gradient(135deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* ---- الفورم ---- */
+    .form-card { background: var(--card); border:1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 26px; }
+    .form-card h3 { margin-bottom: 16px; font-size:1.05rem; display:flex; align-items:center; gap:8px; }
+    .form-card h3 i { color: var(--red); }
+    .form-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width:600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-grid .full { grid-column: 1 / -1; }
+    label { display:block; font-size:.8rem; color: var(--muted); margin-bottom: 6px; font-weight:700; }
+    input, select, textarea { width:100%; padding:12px; background:#101013; border:1px solid var(--line); color:#fff; border-radius:10px; text-align:right; font-family:inherit; }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:var(--red); }
+    textarea { min-height: 90px; resize: vertical; }
+    .checkbox-row { display:flex; align-items:center; gap:8px; }
+    .checkbox-row input { width:auto; }
+    .img-preview { width:100%; height:130px; border-radius:10px; background:#101013; border:1px dashed var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; margin-top:8px; color:var(--muted); font-size:.8rem; }
+    .img-preview img { max-width:100%; max-height:100%; object-fit:contain; }
+    .form-actions { margin-top: 16px; display:flex; gap:10px; }
+
+    /* ---- قائمة المنتجات ---- */
+    .list-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .list-header h3 { font-size:1rem; }
+    .item-row { display:flex; align-items:center; gap:14px; background: var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+    .item-thumb { width:56px; height:56px; border-radius:8px; background:#101013; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+    .item-thumb img { max-width:100%; max-height:100%; object-fit:contain; }
+    .item-info { flex:1; min-width:0; }
+    .item-info b { display:block; font-size:.92rem; }
+    .item-info span { color: var(--red); font-weight:800; font-size:.85rem; }
+    .item-info small { color: var(--muted); display:block; margin-top:2px; }
+    .item-actions { display:flex; gap:8px; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:#101013; color:var(--text); cursor:pointer; }
+    .icon-btn:hover { border-color: var(--red); color: var(--red); }
+    .empty-note { text-align:center; color: var(--muted); padding: 30px; font-size:.88rem; }
+    .toast-msg { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card); border:1px solid var(--line); border-right:4px solid var(--red); padding:12px 20px; border-radius:10px; font-size:.85rem; z-index:9999; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+    .toast-msg.success { border-right-color: var(--whatsapp); }
+    .migrate-box { background: rgba(232,50,58,.06); border:1px dashed var(--red); border-radius:12px; padding:16px; margin-bottom:24px; font-size:.85rem; color:#ddd; line-height:1.8; }
+    .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation: spin .7s linear infinite; margin-left:6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ===== شاشة تحذير عدم إعداد Firebase ===== -->
+<div id="config-screen" style="display:none;">
+    <div class="wrap" style="text-align:center; padding-top:60px;">
+        <i class="fas fa-triangle-exclamation" style="font-size:2.4rem; color:var(--red);"></i>
+        <h2 style="margin:14px 0; font-family:'Orbitron';">لم يتم إعداد Firebase بعد</h2>
+        <div class="config-warning">
+            افتح ملف <b>firebase-config.js</b> وضع فيه بيانات مشروعك من Firebase Console
+            (Project settings ← Your apps ← SDK setup and configuration)، ثم أعد تحميل هذه الصفحة.
+        </div>
+    </div>
+</div>
+
+<!-- ===== شاشة الدخول ===== -->
+<div id="login-screen" style="display:none;">
+    <div class="login-box">
+        <i class="fas fa-lock"></i>
+        <h2>لوحة تحكم RTG-GEARX</h2>
+        <p>سجّل الدخول لإدارة المنتجات وباقات الشدات</p>
+        <div id="login-error"></div>
+        <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+        <input type="password" id="login-password" placeholder="كلمة المرور">
+        <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">دخول <span id="login-spinner"></span></button>
+    </div>
+</div>
+
+<!-- ===== لوحة التحكم ===== -->
+<div id="admin-app" style="display:none;">
+    <header>
+        <div class="logo">RTG-<span>GEARX</span><small>لوحة التحكم</small></div>
+        <button class="btn btn-ghost" onclick="doLogout()"><i class="fas fa-arrow-right-from-bracket"></i> خروج</button>
+    </header>
+
+    <div class="wrap">
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-btn-products" onclick="switchTab('products')"><i class="fas fa-box"></i> المنتجات</button>
+            <button class="tab-btn" id="tab-btn-uc" onclick="switchTab('uc')"><i class="fas fa-gem"></i> باقات شدات ببجي</button>
+        </div>
+
+        <!-- ===== تبويب المنتجات ===== -->
+        <div class="tab-content active" id="tab-products">
+
+            <div class="migrate-box" id="migrate-box">
+                <i class="fas fa-circle-info"></i>
+                هذا زر لمرة واحدة فقط: يستورد الـ39 منتج الحالية (نفس الصور المرفوعة أصلاً على GitHub) إلى قاعدة البيانات، بعدها يمكنك إدارتها من هنا مباشرة.
+                <div style="margin-top:10px;"><button class="btn btn-ghost" onclick="migrateSeedProducts()">استيراد المنتجات الحالية الآن</button></div>
+            </div>
+
+            <div class="form-card">
+                <h3><i class="fas fa-plus-circle"></i> إضافة منتج جديد</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>اسم المنتج</label>
+                        <input type="text" id="p-name" placeholder="مثال: مبرد MEMO CX 09">
+                    </div>
+                    <div>
+                        <label>السعر (د.ل)</label>
+                        <input type="number" id="p-price" placeholder="0">
+                    </div>
+                    <div>
+                        <label>التصنيف</label>
+                        <select id="p-category">
+                            <option value="مبردات">مبردات</option>
+                            <option value="سماعات">سماعات</option>
+                            <option value="مايكات">مايكات</option>
+                            <option value="شواحن">شواحن</option>
+                            <option value="إكسسوارات">إكسسوارات</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>الوزن (اختياري)</label>
+                        <input type="text" id="p-weight" placeholder="مثال: 85g">
+                    </div>
+                    <div class="full">
+                        <label>المواصفات (كل ميزة في سطر منفصل)</label>
+                        <textarea id="p-points" placeholder="تبريد مغناطيسي صامت
+إضاءة RGB
+شاشة رقمية للحرارة"></textarea>
+                    </div>
+                    <div class="full checkbox-row">
+                        <input type="checkbox" id="p-featured">
+                        <label style="margin:0;" for="p-featured">منتج مميز (يظهر في الكاروسيل بالصفحة الرئيسية)</label>
+                    </div>
+                    <div class="full">
+                        <label>صورة المنتج</label>
+                        <input type="file" id="p-image" accept="image/*" onchange="previewImage('p-image','p-preview')">
+                        <div class="img-preview" id="p-preview">لا توجد صورة بعد</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="addProduct()">إضافة المنتج <span class="spinner" id="p-spinner" style="display:none;"></span></button>
+                </div>
+            </div>
+
+            <div class="list-header"><h3>المنتجات الحالية (<span id="p-count">0</span>)</h3></div>
+            <div id="products-list"></div>
+        </div>
+
+        <!-- ===== تبويب شدات ببجي ===== -->
+        <div class="tab-content" id="tab-uc">
+            <div class="form-card">
+                <h3><i class="fas fa-plus-circle"></i> إضافة باقة شدات جديدة</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>اسم الباقة</label>
+                        <input type="text" id="u-name" placeholder="مثال: 420 UC">
+                    </div>
+                    <div>
+                        <label>السعر (د.ل)</label>
+                        <input type="number" id="u-price" placeholder="0">
+                    </div>
+                    <div class="full">
+                        <label>صورة الباقة</label>
+                        <input type="file" id="u-image" accept="image/*" onchange="previewImage('u-image','u-preview')">
+                        <div class="img-preview" id="u-preview">لا توجد صورة بعد</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="addUcPack()">إضافة الباقة <span class="spinner" id="u-spinner" style="display:none;"></span></button>
+                </div>
+            </div>
+
+            <div class="list-header"><h3>باقات الشدات الحالية (<span id="u-count">0</span>)</h3></div>
+            <div id="uc-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ===== تهيئة أولية ===== */
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof FIREBASE_CONFIGURED === 'undefined' || !FIREBASE_CONFIGURED) {
+            document.getElementById('config-screen').style.display = 'block';
+            return;
+        }
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-app').style.display = 'block';
+                loadProductsList();
+                loadUcList();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('admin-app').style.display = 'none';
+            }
+        });
+    });
+
+    function doLogin() {
+        const email = document.getElementById('login-email').value.trim();
+        const pass = document.getElementById('login-password').value;
+        const errEl = document.getElementById('login-error');
+        const spin = document.getElementById('login-spinner');
+        errEl.innerText = '';
+        if (!email || !pass) { errEl.innerText = 'أدخل البريد الإلكتروني وكلمة المرور'; return; }
+        spin.innerHTML = '<span class="spinner"></span>';
+        auth.signInWithEmailAndPassword(email, pass)
+            .catch(err => { errEl.innerText = 'بيانات الدخول غير صحيحة'; })
+            .finally(() => spin.innerHTML = '');
+    }
+    function doLogout() { auth.signOut(); }
+
+    function switchTab(name) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        document.getElementById('tab-btn-' + name).classList.add('active');
+    }
+
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    function previewImage(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => { preview.innerHTML = `<img src="${e.target.result}">`; };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function showToast(msg, kind) {
+        const el = document.createElement('div');
+        el.className = 'toast-msg' + (kind === 'success' ? ' success' : '');
+        el.innerText = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+    }
+
+    async function uploadImage(file, folder) {
+        // رفع الصورة إلى Supabase Storage (بديل مجاني لـ Firebase Storage)
+        // نستخدم فقط المفتاح العام (window.supabaseKey) المخصص لهذا الغرض بالضبط
+        const safeName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
+        const path = `${folder}/${Date.now()}_${safeName}`;
+        const uploadUrl = `${window.supabaseUrl}/storage/v1/object/${window.supabaseBucket}/${path}`;
+
+        const res = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${window.supabaseKey}`,
+                'apikey': window.supabaseKey,
+                'Content-Type': file.type || 'application/octet-stream'
+            },
+            body: file
+        });
+
+        if (!res.ok) {
+            let msg = 'فشل رفع الصورة إلى Supabase';
+            try { const errJson = await res.json(); msg = errJson.message || errJson.error || msg; } catch (_) {}
+            throw new Error(msg);
+        }
+
+        // رابط الصورة العام النهائي الذي سيُحفظ في Firestore ويُعرض في الموقع
+        return `${window.supabaseUrl}/storage/v1/object/public/${window.supabaseBucket}/${path}`;
+    }
+
+    /* ===== المنتجات ===== */
+    async function addProduct() {
+        const name = document.getElementById('p-name').value.trim();
+        const price = parseFloat(document.getElementById('p-price').value);
+        const category = document.getElementById('p-category').value;
+        const weight = document.getElementById('p-weight').value.trim();
+        const points = document.getElementById('p-points').value.split('\n').map(s=>s.trim()).filter(Boolean);
+        const featured = document.getElementById('p-featured').checked;
+        const file = document.getElementById('p-image').files[0];
+
+        if (!name || !price || !file) { showToast('أكمل الاسم والسعر والصورة على الأقل'); return; }
+
+        const spin = document.getElementById('p-spinner'); spin.style.display = 'inline-block';
+        try {
+            const imageUrl = await uploadImage(file, 'products');
+            await db.collection('products').add({
+                name, price, category, weight, points, featured, imageUrl,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast('تمت إضافة المنتج بنجاح ✅ وسيظهر فوراً في الموقع', 'success');
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-weight').value = '';
+            document.getElementById('p-points').value = '';
+            document.getElementById('p-featured').checked = false;
+            document.getElementById('p-image').value = '';
+            document.getElementById('p-preview').innerHTML = 'لا توجد صورة بعد';
+        } catch (e) { showToast('حدث خطأ: ' + e.message); }
+        spin.style.display = 'none';
+    }
+
+    function loadProductsList() {
+        db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('products-list');
+            document.getElementById('p-count').innerText = snap.size;
+            if (snap.empty) { list.innerHTML = '<div class="empty-note">لا توجد منتجات بعد. أضف منتجك الأول أعلاه، أو استخدم زر الاستيراد.</div>'; return; }
+            list.innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `<div class="item-row">
+                    <div class="item-thumb"><img src="${p.imageUrl || p.img || ''}"></div>
+                    <div class="item-info">
+                        <b>${escapeHtml(p.name)} ${p.featured ? '<i class="fas fa-fire" style="color:var(--red);"></i>' : ''}</b>
+                        <span>${p.price} د.ل</span>
+                        <small>${escapeHtml(p.category || '')}</small>
+                    </div>
+                    <div class="item-actions">
+                        <button class="icon-btn" onclick="toggleFeatured('${d.id}', ${!p.featured})" title="تمييز/إلغاء تمييز"><i class="fas fa-star"></i></button>
+                        <button class="icon-btn" onclick="deleteProduct('${d.id}')" title="حذف"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        });
+    }
+
+    function toggleFeatured(id, value) {
+        db.collection('products').doc(id).update({ featured: value }).then(() => showToast('تم التحديث', 'success'));
+    }
+    function deleteProduct(id) {
+        if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+        db.collection('products').doc(id).delete().then(() => showToast('تم الحذف', 'success'));
+    }
+
+    /* ===== باقات الشدات ===== */
+    async function addUcPack() {
+        const name = document.getElementById('u-name').value.trim();
+        const price = parseFloat(document.getElementById('u-price').value);
+        const file = document.getElementById('u-image').files[0];
+        if (!name || !price || !file) { showToast('أكمل الاسم والسعر والصورة'); return; }
+
+        const spin = document.getElementById('u-spinner'); spin.style.display = 'inline-block';
+        try {
+            const imageUrl = await uploadImage(file, 'ucpacks');
+            await db.collection('ucPacks').add({ name, price, imageUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            showToast('تمت إضافة الباقة بنجاح ✅', 'success');
+            document.getElementById('u-name').value = '';
+            document.getElementById('u-price').value = '';
+            document.getElementById('u-image').value = '';
+            document.getElementById('u-preview').innerHTML = 'لا توجد صورة بعد';
+        } catch (e) { showToast('حدث خطأ: ' + e.message); }
+        spin.style.display = 'none';
+    }
+
+    function loadUcList() {
+        db.collection('ucPacks').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            const list = document.getElementById('uc-list');
+            document.getElementById('u-count').innerText = snap.size;
+            if (snap.empty) { list.innerHTML = '<div class="empty-note">لا توجد باقات بعد.</div>'; return; }
+            list.innerHTML = snap.docs.map(d => {
+                const u = d.data();
+                return `<div class="item-row">
+                    <div class="item-thumb"><img src="${u.imageUrl || u.img || ''}"></div>
+                    <div class="item-info"><b>${escapeHtml(u.name)}</b><span>${u.price} د.ل</span></div>
+                    <div class="item-actions"><button class="icon-btn" onclick="deleteUcPack('${d.id}')" title="حذف"><i class="fas fa-trash"></i></button></div>
+                </div>`;
+            }).join('');
+        });
+    }
+    function deleteUcPack(id) {
+        if (!confirm('هل أنت متأكد من حذف هذه الباقة؟')) return;
+        db.collection('ucPacks').doc(id).delete().then(() => showToast('تم الحذف', 'success'));
+    }
+
+    /* =====================================================================
+       استيراد المنتجات الحالية (نسخة مطابقة لبيانات index.html) — لمرة واحدة
+       ملاحظة: نستخدم نفس أسماء ملفات الصور الموجودة أصلاً على GitHub، لذلك
+       لا حاجة لإعادة رفعها؛ فقط نخزّن اسم الملف كـ imageUrl مباشرة.
+       ===================================================================== */
+    const seedProducts = [
+        { name: "مبرد (MEMO CX 07)", price: 90, img: "akjgejkg.png", featured: true, weight: "68g", category:"مبردات", points: ["تبريد مغناطيسي صامت", "مشتت حراري حلقي", "إضاءة RGB جذابة", "يدعم Magsafe"] },
+        { name: "مبرد (MEMO CX 08 PRO)", price: 135, img: "memo-cx08-hight-power-mobile-phone-radiator3043a.png", featured: true, weight: "85g", category:"مبردات", points: ["شاشة ديجيتال للحرارة", "تبريد أشباه الموصلات", "مروحة هادئة وقوية", "مشبك وحامل مغناطيسي"] },
+        { name: "سماعة (RX3 PRO)", price: 95, img: "product_image-img_2964-0717.png", featured: true, weight: "25g", category:"سماعات", points: ["مايكروفون مزدوج للعزل", "صوت محيطي للألعاب", "منفذ L-Type مريح", "تصميم معدني متين"] },
+        { name: "مبرد (MEMO CX 08)", price: 120, img: "1_d096a3cc-5b81-4af5-85d0-38ff2cdac644.png", featured: true, weight: "80g", category:"مبردات", points: ["تبريد مائي/هوائي هجين", "تثبيت مغناطيسي", "إضاءة RGB", "تبريد فوري سريع"] },
+        { name: "موزع حرارة", price: 25, img: "001_Heat-Distributor.png", featured: false, weight: "10g", category:"مبردات", points: ["توزيع الحرارة بانتظام", "لاصق قوي وآمن", "حماية للمعالج", "متوافق مع كل المبردات"] },
+        { name: "مبرد (MEMO CX 12)", price: 130, img: "default-title-memo-cx12-36133771018287.png", featured: false, weight: "160g", category:"مبردات", points: ["مخصص للآيباد والتابلت", "مساحة تبريد كبيرة", "تثبيت مغناطيسي قوي", "شاشة عرض الحرارة"] },
+        { name: "مبرد (MEMO CX 06)", price: 80, img: "MEMO-CX06-Phone-Cooler-15W-1-600x600.png", featured: false, weight: "65g", category:"مبردات", points: ["تبريد هوائي نشط", "بدون بطارية (خفيف)", "مشبك مرن للهاتف", "سعر اقتصادي وعملي"] },
+        { name: "مبرد (MEMO CX 10)", price: 115, img: "11172-800x800.png", featured: false, weight: "70g", category:"مبردات", points: ["شاشة رقمية للحرارة", "زر للتحكم بالسرعة", "إضاءة RGB ملونة", "تصميم عصري وجذاب"] },
+        { name: "مبرد (MEMO CX 15)", price: 125, img: "cx15.png", featured: false, weight: "90g", category:"مبردات", points: ["تبريد فائق السرعة", "تحكم ذكي بالحرارة", "شاشة ديجيتال", "تثبيت مزدوج (مشبك/مغناطيس)"] },
+        { name: "مبرد (MEMO CX 05)", price: 155, img: "2025_06_06_23_46_IMG_2088.png", featured: false, weight: "95g", category:"مبردات", points: ["الأقوى (يصل للتجمد)", "مروحة 7500 دورة/دقيقة", "تحكم في إضاءة RGB", "شاشة حرارة ديجيتال"] },
+        { name: "سماعة (G27)", price: 135, img: "H96ce48efa82b471bb65ba620783ff61eF.png", featured: false, weight: "300g", category:"سماعات", points: ["عزل صوتي ممتاز", "مايكروفون مرن وقوي", "تحديد اتجاه الخطوات", "وسائد أذن مريحة"] },
+        { name: "سماعة (M416)", price: 85, img: "51HK9qTd6BL.png", featured: false, weight: "250g", category:"سماعات", points: ["تصميم مستوحى من اللعبة", "صوت ستيريو نقي", "متينة وتتحمل الاستخدام", "كيبل طويل مقوى"] },
+        { name: "قفازات (VIBER)", price: 25, img: "VIBER.png", featured: false, weight: "5g", category:"إكسسوارات", points: ["ألياف فضية 100%", "حساسية لمس فائقة", "مقاومة للتعرق", "نسيج مسامي للتهوية"] },
+        { name: "مايك (microphone 3.5)", price: 45, img: "mik 3.5.png", featured: false, weight: "50g", category:"مايكات", points: ["مشبك تعليق معدني", "مدخل 3.5mm عالمي", "كيبل طويل", "عزل ضوضاء مقبول"] },
+        { name: "مايك (Plokama)", price: 160, img: "Plokama MIK.png", featured: false, weight: "120g", category:"مايكات", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
+        { name: "تحويلة (3 IN 1 HDTV)", price: 85, img: "3 IN 1 HDTV.png", featured: false, weight: "40g", category:"إكسسوارات", points: ["عرض شاشة بدقة 4K", "شحن سريع PD", "منفذ USB إضافي", "توصيل وتشغيل فوري"] },
+        { name: "مثبت هاتف (Ring Light)", price: 55, img: " Ring Light.png", featured: false, weight: "500g", category:"إكسسوارات", points: ["3 أوضاع للإضاءة", "تحكم في السطوع", "حامل ثلاثي ثابت", "رأس دوار 360 درجة"] },
+        { name: "سماعات (BOROFONE 3.5)", price: 30, img: "Earphones BOROFONE 3.5.png", featured: false, weight: "15g", category:"سماعات", points: ["صوت نقي وواضح", "سلك متين ومقاوم للقطع", "زر تحكم بالمكالمات", "مريحة للأذن"] },
+        { name: "سماعات (samsung)", price: 35, img: "samsunfg.png", featured: false, weight: "15g", category:"سماعات", points: ["جودة AKG الأصلية", "صوت جهوري (Bass)", "تصميم In-Ear مريح", "أزرار تحكم بالصوت"] },
+        { name: "مايك (K15)", price: 100, img: "mik 2.png", featured: false, weight: "80g", category:"مايكات", points: ["مايك مزدوج (قطعتين)", "اتصال لاسلكي فوري", "متوافق مع تايب سي/آيفون", "فلترة صوت الرياح"] },
+        { name: "سماعات (airpods 2 pro)", price: 80, img: "airpods.png", featured: false, weight: "45g", category:"سماعات", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+        { name: "تحويلة (شحن وسماعة)", price: 30, img: "Gemini_Generated_Image_70uh1970uh1970uh.png", featured: false, weight: "10g", category:"إكسسوارات", points: ["شحن واستماع بنفس الوقت", "تدعم المايكروفون", "حجم صغير ومحمولة", "جودة صوت عالية"] },
+        { name: "سماعات (BOROFONE Type-C)", price: 30, img: "Earphones BOROFONE.png", featured: false, weight: "15g", category:"سماعات", points: ["شريحة صوت رقمية DAC", "متوافقة مع أحدث الهواتف", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "سماعات (BAVIN (BH-63))", price: 205, img: "Gemini_Generated_Image_mkmz6umkmz6umkmz.png", featured: false, weight: "200g", category:"سماعات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "سماعات (BAVIN (BH-61))", price: 170, img: "Gemini_Generated_Image_txajggtxajggtxaj.png", featured: false, weight: "235g", category:"سماعات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "مبرد (SL-33))", price: 90, img: "Gemini_Generated_Image_4y770t4y770t4y77.png", featured: false, weight: "95g", category:"مبردات", points: ["الأقوى (يصل للتجمد)", "مروحة 7500 دورة/دقيقة", "تحكم في إضاءة RGB", "شاشة حرارة ديجيتال"] },
+        { name: "(ازرار الالعاب)", price: 50, img: "Gemini_Generated_Image_6ke3mr6ke3mr6ke3.png", featured: false, weight: "20g", category:"إكسسوارات", points: ["تخصيص اربعه ازرار", "متوافقه معا جميع الاجهزة", "خفيفة الوزن", "تصميم مريح لليد"] },
+        { name: "سماعات (BOROFONE (BO-112)", price: 135, img: "Gemini_Generated_Image_8gto7p8gto7p8gto.png", featured: false, weight: "15g", category:"سماعات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "سماعات (airpods 2 pro)", price: 80, img: "Gemini_Generated_Image_cgcpk6cgcpk6cgcp.png", featured: false, weight: "45g", category:"سماعات", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+        { name: "مبرد (BAVIN-007)", price: 125, img: "tytty.png", featured: false, weight: "45g", category:"مبردات", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+        { name: "مبرد (BAVIN-008)", price: 140, img: "jgetwsye.png", featured: false, weight: "45g", category:"مبردات", points: ["نسخة طبق الأصل (Copy)", "عزل ضوضاء ANC", "اقتران تلقائي سريع", "علبة تدعم الشحن اللاسلكي"] },
+        { name: "سماعات (ACEFAST-W1))", price: 215, img: "HFHT.png", featured: false, weight: "235g", category:"سماعات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "قفازات (MEMO)", price: 25, img: "HRTHTJ.png", featured: false, weight: "235g", category:"إكسسوارات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "مبرد (MEMO DLA8)", price: 75, img: "JFJF.png", featured: false, weight: "235g", category:"مبردات", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "مدخل شحن(20W)", price: 55, img: "DRFHY.png", featured: false, weight: "235g", category:"شواحن", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "مدخل شحن(30W)", price: 75, img: "JFDDJHT.png", featured: false, weight: "235g", category:"شواحن", points: ["شريحة صوت رقمية DAC", "صوت ستيريو محيطي", "تصميم مريح للأذن"] },
+        { name: "مايك (Plokama-VM10)", price: 125, img: "JFG.png", featured: false, weight: "120g", category:"مايكات", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
+        { name: "مايك (K8)", price: 75, img: "FUTIU.png", featured: false, weight: "120g", category:"مايكات", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
+        { name: "باور بانك(10.000)", price: 100, img: "RTY.png", featured: false, weight: "120g", category:"شواحن", points: ["لاسلكي بتردد 2.4G", "تقليل ضوضاء ذكي", "مدى يصل لـ 20 متر", "بطارية طويلة العمر"] },
+    ];
+    const seedUcPacks = [
+        { name: '60 UC', price: 3, img: "60-uc.png" },
+        { name: '360 UC', price: 12, img: "360-uc.png" },
+        { name: '660 UC', price: 22, img: "660-uc.png" },
+        { name: '1800 UC', price: 40, img: "1800-uc.png" },
+        { name: '3850 UC', price: 95, img: "3850-uc.png" },
+        { name: '8100 UC', price: 95, img: "8100-uc.png" },
+    ];
+
+    async function migrateSeedProducts() {
+        if (!confirm('سيتم استيراد ' + seedProducts.length + ' منتج و ' + seedUcPacks.length + ' باقة شدات. تنفّذ هذه العملية مرة واحدة فقط. متابعة؟')) return;
+        const box = document.getElementById('migrate-box');
+        box.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارِ الاستيراد... الرجاء الانتظار ولا تغلق الصفحة';
+        const batch1 = db.batch();
+        seedProducts.forEach(p => {
+            const ref = db.collection('products').doc();
+            batch1.set(ref, { ...p, imageUrl: p.img, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        });
+        await batch1.commit();
+        const batch2 = db.batch();
+        seedUcPacks.forEach(u => {
+            const ref = db.collection('ucPacks').doc();
+            batch2.set(ref, { ...u, imageUrl: u.img, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        });
+        await batch2.commit();
+        box.innerHTML = '<i class="fas fa-check-circle" style="color:var(--whatsapp);"></i> تم الاستيراد بنجاح! يمكنك الآن إدارة كل شيء من هنا.';
+        showToast('تم استيراد كل المنتجات بنجاح ✅', 'success');
+    }
+</script>
+</body>
+</html>
